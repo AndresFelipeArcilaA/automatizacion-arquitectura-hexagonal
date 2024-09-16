@@ -29,21 +29,7 @@ mkdir -p $PROJECT_NAME/src/main/java/com/$PROJECT_SUFIJO/infrastructure/ports/ou
 mkdir -p $PROJECT_NAME/src/main/resources
 mkdir -p $PROJECT_NAME/src/test/java/com/$PROJECT_SUFIJO
 
-# Crear archivos básicos con contenido adecuado
-touch $PROJECT_NAME/src/main/java/com/$PROJECT_SUFIJO/application/exception/CustomException.java
-touch $PROJECT_NAME/src/main/java/com/$PROJECT_SUFIJO/application/usecases/UseCase.java
-touch $PROJECT_NAME/src/main/java/com/$PROJECT_SUFIJO/domain/models/DomainModel.java
-touch $PROJECT_NAME/src/main/java/com/$PROJECT_SUFIJO/domain/models/enums/EnumModel.java
-touch $PROJECT_NAME/src/main/java/com/$PROJECT_SUFIJO/infrastructure/adapters/Adapter.java
-
-# Agregar contenido básico a los archivos creados
-echo "package com.$PROJECT_SUFIJO.domain.models;" > $PROJECT_NAME/src/main/java/com/$PROJECT_SUFIJO/domain/models/DomainModel.java
-echo "package com.$PROJECT_SUFIJO.application.exception;" > $PROJECT_NAME/src/main/java/com/$PROJECT_SUFIJO/application/exception/CustomException.java
-echo "package com.$PROJECT_SUFIJO.application.usecases;" > $PROJECT_NAME/src/main/java/com/$PROJECT_SUFIJO/application/usecases/UseCase.java
-echo "package com.$PROJECT_SUFIJO.domain.models.enums;" > $PROJECT_NAME/src/main/java/com/$PROJECT_SUFIJO/domain/models/enums/EnumModel.java
-echo "package com.$PROJECT_SUFIJO.infrastructure.adapters;" > $PROJECT_NAME/src/main/java/com/$PROJECT_SUFIJO/infrastructure/adapters/Adapter.java
-
-# Agregar un pom.xml básico
+# Agregar un pom.xml
 cat <<EOL > $PROJECT_NAME/pom.xml
 
 <?xml version="1.0" encoding="UTF-8"?>
@@ -61,7 +47,7 @@ cat <<EOL > $PROJECT_NAME/pom.xml
 	<artifactId>$PROJECT_SUFIJO</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>$PROJECT_SUFIJO</name>
-	<description>Prueba tecnica para Capgemini</description>
+	<description>Backend $PROJECT_SUFIJO</description>
 	<url />
 	<licenses>
 		<license />
@@ -180,6 +166,55 @@ cat <<EOL > $PROJECT_NAME/pom.xml
 	</build>
 
 </project>
+EOL
+
+cat <<EOL > $PROJECT_NAME/src/main/resources/application-dev.yml
+server:
+  port: 8082
+  servlet:
+    context-path: /api/v1/$PROJECT_SUFIJO
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  api-docs:
+    path: /api/v1/$PROJECT_SUFIJO
+    enabled: true
+
+spring:
+  banner:
+    location: custom-banner.txt
+  config:
+    activate:
+      on-profile: dev
+  application:
+    name: $PROJECT_NAME
+  datasource:
+    url: jdbc:postgresql://localhost:5433/$PROJECT_SUFIJO
+    username: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      jdbc:
+        lob:
+          non_contextual_creation: false
+    generate-ddl: false
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update 
+
+request-mapping:
+  controller:
+
+EOL
+
+cat <<EOL > $PROJECT_NAME/src/main/resources/application.yml
+spring:
+  profiles:
+    active: dev
 EOL
 
 echo "Estructura generada correctamente para el proyecto $PROJECT_NAME con sufijo $PROJECT_SUFIJO."
